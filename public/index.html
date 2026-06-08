@@ -562,6 +562,40 @@
   .install-btn { background: white; color: var(--accent); border: none; border-radius: 8px; padding: 8px 14px; font-weight: 700; font-size: 12px; cursor: pointer; white-space: nowrap; }
   .install-close { background: none; border: none; color: white; font-size: 18px; cursor: pointer; opacity: 0.8; padding: 4px; }
 
+  /* TABLE SCROLL ON MOBILE */
+  .table-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .table-scroll-wrapper::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .table-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+
+  .table-scroll-wrapper table {
+    min-width: 600px;
+  }
+
+  .scroll-hint {
+    display: none;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    padding: 6px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    .scroll-hint { display: block; }
+  }
+
   @media (max-width: 768px) {
     .sidebar { display: none; }
     .main { margin-left: 0; padding-bottom: 80px; }
@@ -863,7 +897,7 @@ async function loadMahasiswa() {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">🎓</div><div class="empty-text">Belum ada data mahasiswa</div></div>`;
     return;
   }
-  el.innerHTML = `<table>
+  el.innerHTML = `<div class="table-scroll-wrapper"><table>
     <thead><tr>
       <th>NIM</th><th>Nama</th><th>Jurusan</th><th>Angkatan</th><th>IPK</th><th>Status</th><th>Aksi</th>
     </tr></thead>
@@ -881,7 +915,7 @@ async function loadMahasiswa() {
         </div></td>
       </tr>`).join('')}
     </tbody>
-  </table>`;
+  </table><div class="scroll-hint">← Geser untuk melihat lebih →</div></div>`;
 }
 
 async function loadDashMahasiswa() {
@@ -912,7 +946,7 @@ async function loadDosen() {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">👨‍🏫</div><div class="empty-text">Belum ada data dosen</div></div>`;
     return;
   }
-  el.innerHTML = `<table>
+  el.innerHTML = `<div class="table-scroll-wrapper"><table>
     <thead><tr><th>NIP</th><th>Nama</th><th>Gelar</th><th>Bidang Keahlian</th><th>Jabatan</th><th>Email</th><th>Aksi</th></tr></thead>
     <tbody>${d.data.map(ds => `
       <tr>
@@ -927,7 +961,7 @@ async function loadDosen() {
           <button class="btn btn-danger btn-sm" onclick="deleteData('dosen','${ds._id}','${ds.nama}')">🗑️</button>
         </div></td>
       </tr>`).join('')}
-    </tbody></table>`;
+    </tbody></table><div class="scroll-hint">← Geser untuk melihat lebih →</div></div>`;
 }
 
 // =================== MATA KULIAH ===================
@@ -941,7 +975,7 @@ async function loadMatkul() {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-text">Belum ada mata kuliah</div></div>`;
     return;
   }
-  el.innerHTML = `<table>
+  el.innerHTML = `<div class="table-scroll-wrapper"><table>
     <thead><tr><th>Kode</th><th>Nama MK</th><th>SKS</th><th>Semester</th><th>Jurusan</th><th>Dosen</th><th>Aksi</th></tr></thead>
     <tbody>${d.data.map(mk => `
       <tr>
@@ -956,7 +990,7 @@ async function loadMatkul() {
           <button class="btn btn-danger btn-sm" onclick="deleteData('matkul','${mk._id}','${mk.nama}')">🗑️</button>
         </div></td>
       </tr>`).join('')}
-    </tbody></table>`;
+    </tbody></table><div class="scroll-hint">← Geser untuk melihat lebih →</div></div>`;
 }
 
 // =================== KRS ===================
@@ -967,8 +1001,8 @@ async function loadKRS() {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Belum ada data KRS</div></div>`;
     return;
   }
-  el.innerHTML = `<table>
-    <thead><tr><th>Mahasiswa</th><th>NIM</th><th>Mata Kuliah</th><th>Kode</th><th>SKS</th><th>Semester</th><th>Tahun Akademik</th><th>Nilai</th><th>Aksi</th></tr></thead>
+  el.innerHTML = `<div class="table-scroll-wrapper"><table>
+    <thead><tr><th>Mahasiswa</th><th>NIM</th><th>Mata Kuliah</th><th>Kode</th><th>SKS</th><th>Semester</th><th>Tahun Akademik</th><th>Nilai Huruf</th><th>Nilai Angka</th><th>Aksi</th></tr></thead>
     <tbody>${d.data.map(k => `
       <tr>
         <td class="td-main">${k.mahasiswa_id?.nama || '—'}</td>
@@ -979,12 +1013,13 @@ async function loadKRS() {
         <td>${k.semester}</td>
         <td>${k.tahun_akademik}</td>
         <td>${badgeNilai(k.nilai)}</td>
+        <td style="text-align:center"><span class="badge ${k.nilai_angka >= 80 ? 'badge-green' : k.nilai_angka >= 60 ? 'badge-blue' : k.nilai_angka !== null ? 'badge-red' : 'badge-blue'}">${k.nilai_angka !== null && k.nilai_angka !== undefined ? k.nilai_angka : '—'}</span></td>
         <td><div class="actions">
           <button class="btn btn-ghost btn-sm" onclick="editData('krs','${k._id}')">✏️ Edit</button>
           <button class="btn btn-danger btn-sm" onclick="deleteData('krs','${k._id}','KRS ini')">🗑️</button>
         </div></td>
       </tr>`).join('')}
-    </tbody></table>`;
+    </tbody></table><div class="scroll-hint">← Geser untuk melihat lebih →</div></div>`;
 }
 
 // =================== BADGES ===================
@@ -1130,9 +1165,12 @@ async function submitForm() {
       dosen_id: v('f-dosen') || null, deskripsi: v('f-deskripsi')
     };
   } else if (t === 'krs') {
+    const nilaiAngkaVal = v('f-nilai-angka');
     payload = {
       mahasiswa_id: v('f-mahasiswa'), mata_kuliah_id: v('f-matkul'),
-      semester: v('f-semester-krs'), tahun_akademik: v('f-tahun'), nilai: v('f-nilai')
+      semester: v('f-semester-krs'), tahun_akademik: v('f-tahun'),
+      nilai: v('f-nilai'),
+      nilai_angka: nilaiAngkaVal !== '' ? Number(nilaiAngkaVal) : null
     };
   }
 
@@ -1156,6 +1194,14 @@ async function submitForm() {
   } catch {
     showToast('Gagal terhubung ke server', 'error');
   }
+}
+
+
+// Auto-fill nilai angka berdasarkan nilai huruf
+function autoFillNilaiAngka(huruf) {
+  const map = { 'A': 90, 'B+': 85, 'B': 80, 'C+': 75, 'C': 70, 'D': 60, 'E': 40, '-': '' };
+  const el = document.getElementById('f-nilai-angka');
+  if (el && el.value === '') el.value = map[huruf] ?? '';
 }
 
 // =================== EDIT ===================

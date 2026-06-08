@@ -61,6 +61,7 @@ const krsSchema = new mongoose.Schema({
   mata_kuliah_id: { type: mongoose.Schema.Types.ObjectId, ref: 'MataKuliah', required: true },
   semester: { type: String, required: true },
   nilai: { type: String, enum: ['A', 'B+', 'B', 'C+', 'C', 'D', 'E', '-'], default: '-' },
+  nilai_angka: { type: Number, min: 0, max: 100, default: null },
   tahun_akademik: { type: String, required: true }
 }, { timestamps: true });
 
