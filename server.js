@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI;
@@ -61,7 +61,6 @@ const krsSchema = new mongoose.Schema({
   mata_kuliah_id: { type: mongoose.Schema.Types.ObjectId, ref: 'MataKuliah', required: true },
   semester: { type: String, required: true },
   nilai: { type: String, enum: ['A', 'B+', 'B', 'C+', 'C', 'D', 'E', '-'], default: '-' },
-  nilai_angka: { type: Number, min: 0, max: 100, default: null },
   tahun_akademik: { type: String, required: true }
 }, { timestamps: true });
 
