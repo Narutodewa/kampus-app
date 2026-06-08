@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,16 +8,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB Connection
-const MONGO_URI = 'mongodb://admin:gokil127b@ac-c4ogjzu-shard-00-00.csskltt.mongodb.net:27017,ac-c4ogjzu-shard-00-01.csskltt.mongodb.net:27017,ac-c4ogjzu-shard-00-02.csskltt.mongodb.net:27017/kampus_db?ssl=true&replicaSet=atlas-mn6spq-shard-0&authSource=admin&retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI;
 
-mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 10000,
-  socketTimeoutMS: 45000,
-  family: 4,
-})
+mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ Terhubung ke MongoDB Atlas'))
-  .catch(err => console.error('❌ Gagal koneksi MongoDB:', err.message));
-  
+  .catch(err => console.error('❌ Gagal koneksi MongoDB:', err));
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -64,6 +61,7 @@ const krsSchema = new mongoose.Schema({
   mata_kuliah_id: { type: mongoose.Schema.Types.ObjectId, ref: 'MataKuliah', required: true },
   semester: { type: String, required: true },
   nilai: { type: String, enum: ['A', 'B+', 'B', 'C+', 'C', 'D', 'E', '-'], default: '-' },
+  nilai_angka: { type: Number, min: 0, max: 100, default: null },
   tahun_akademik: { type: String, required: true }
 }, { timestamps: true });
 
